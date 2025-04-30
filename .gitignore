@@ -1,0 +1,6 @@
+.conda*
+__pycache*
+*.tsx
+*.tiled-session
+*.tiled-project
+./esper*
