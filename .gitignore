@@ -3,4 +3,4 @@ __pycache*
 *.tsx
 *.tiled-session
 *.tiled-project
-./esper*
+esper/
