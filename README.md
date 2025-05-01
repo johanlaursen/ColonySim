@@ -1,11 +1,11 @@
 ### Colony Sim
 
-Goal is to make a colony simulator using Esper ECS and Pyglet.
+Goal is to make a colony simulator using Esper ECS and Arcade.
 
 
 ### TODO
 
-- [ ] Add zooming in and out functionality with scroll wheel
+- [ ] Add zooming in and out functionality with scroll wheel (using Arcade Camera instead of pyglet)
 - [ ] Define coordinate system, i.e. where is each tile and how does it correlate to x,y position
 - [ ] Define building
     - [ ] house
