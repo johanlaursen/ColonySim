@@ -4,8 +4,11 @@ import arcade
 from arcade.camera import Camera2D
 from arcade.math import Vec2
 
+from core.settings import MAP_TILE_HEIGHT
+from core.settings import MAP_TILE_WIDTH
 from core.settings import RESOLUTION
 from core.settings import SCROLL_ZOOM_SPEED
+from core.settings import TILE_SIZE
 from core.spritemap import SPRITEMAP
 
 SCREEN_WIDTH, SCREEN_HEIGHT = RESOLUTION
@@ -22,9 +25,9 @@ class MainWindow(arcade.Window):
             size=(16, 16), columns=49, count=49 * 22
         )
 
-        self.map_width = 250
-        self.map_height = 250
-        self.tile_size = 16
+        self.map_width = MAP_TILE_WIDTH
+        self.map_height = MAP_TILE_HEIGHT
+        self.tile_size = TILE_SIZE
         self.map_sprites = arcade.SpriteList()
 
         self.ground_types = [
