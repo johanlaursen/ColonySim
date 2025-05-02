@@ -80,20 +80,28 @@ class MainWindow(arcade.Window):
 
     def on_mouse_press(self, x, y, button, modifiers):
         if button == arcade.MOUSE_BUTTON_LEFT:
-            self.is_dragging = True
-            self.last_mouse_x = x
-            self.last_mouse_y = y
-
-    def on_mouse_release(self, x, y, button, modifiers):
-        if button == arcade.MOUSE_BUTTON_LEFT:
-            self.is_dragging = False
+            self.is_dragging = False  # Reset dragging state
+            self.mouse_start_x = x
+            self.mouse_start_y = y
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        if self.is_dragging:
+        if buttons & arcade.MOUSE_BUTTON_LEFT:
+            self.is_dragging = True  # Mark as dragging
             scale = 1 / self.camera_scale
             movement = Vec2(dx * scale, dy * scale)
             self.camera_position = self.camera_position - movement
             self.camera.position = self.camera_position
+
+    def on_mouse_release(self, x, y, button, modifiers):
+        if button == arcade.MOUSE_BUTTON_LEFT:
+            if not self.is_dragging:
+                # Handle mouse click (no dragging occurred)
+                print(f"Mouse clicked at ({x}, {y})")
+                # Convert screen coordinates to world coordinates
+                world_x, world_y, world_z = self.camera.unproject((x, y))
+                print(f"World coordinates: ({world_x}, {world_y}, {world_z})")
+            else:
+                print("Mouse drag ended")
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.UP:
