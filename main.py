@@ -1,27 +1,50 @@
+import random
+
 import arcade
 from arcade.camera import Camera2D
 from arcade.math import Vec2
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-SCREEN_TITLE = "Camera2D Zoom and Pan"
+from core.settings import RESOLUTION
+from core.settings import SCROLL_ZOOM_SPEED
+from core.spritemap import SPRITEMAP
 
-SCROLL_ZOOM_SPEED = 0.1
-PAN_SPEED_DIVISOR = 2
+SCREEN_WIDTH, SCREEN_HEIGHT = RESOLUTION
+SCREEN_TITLE = "COLONY SIM"
 
 
 class MainWindow(arcade.Window):
     def __init__(self):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-        arcade.set_background_color(arcade.color.AMAZON)
+        # arcade.set_background_color(arcade.color.AMAZON)
 
+        self.sprite_sheet = arcade.SpriteSheet("resources/colored_packed.png")
+        self.texture_grid = self.sprite_sheet.get_texture_grid(
+            size=(16, 16), columns=49, count=49 * 22
+        )
+
+        self.map_width = 250
+        self.map_height = 250
+        self.tile_size = 16
+        self.map_sprites = arcade.SpriteList()
+
+        self.ground_types = [
+            SPRITEMAP["ground"],
+            SPRITEMAP["ground_dirt"],
+            SPRITEMAP["ground_dirt_2"],
+        ]
+        for row in range(self.map_height):
+            for col in range(self.map_width):
+                ground_type = random.choices(
+                    population=self.ground_types, weights=[0.9, 0.09, 0.01], k=1
+                )[0]
+                sprite = arcade.Sprite()
+                sprite.texture = self.texture_grid[ground_type]
+                sprite.center_x = col * (self.tile_size)
+                sprite.center_y = row * (self.tile_size)
+                self.map_sprites.append(sprite)
+
+        self.selection = 0
         self.sprite_list = arcade.SpriteList()
-        for x in range(0, 2000, 200):
-            for y in range(0, 2000, 200):
-                sprite = arcade.SpriteCircle(radius=20, color=arcade.color.BLUE)
-                sprite.center_x = x
-                sprite.center_y = y
-                self.sprite_list.append(sprite)
 
         self.camera = Camera2D()
 
@@ -35,7 +58,14 @@ class MainWindow(arcade.Window):
     def on_draw(self):
         self.clear()
         self.camera.use()
-        self.sprite_list.draw()
+        self.map_sprites.draw()
+
+        # Cycle through the sprite list
+        # self.sprite_list.clear()
+        # current_sprite = sprite = arcade.Sprite(self.texture_grid[self.selection],1,0, 0)
+        # self.sprite_list.append(sprite)
+        # self.sprite_list.draw()
+        # arcade.draw_text(f"Selected: {self.selection}", 10, 10, arcade.color.WHITE, 14)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
         if scroll_y > 0:
@@ -61,6 +91,12 @@ class MainWindow(arcade.Window):
             movement = Vec2(dx * scale, dy * scale)
             self.camera_position = self.camera_position - movement
             self.camera.position = self.camera_position
+
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.UP:
+            self.selection += 1
+        elif key == arcade.key.DOWN:
+            self.selection -= 1
 
     def on_update(self, delta_time):
         pass
