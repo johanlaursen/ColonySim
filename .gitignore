@@ -4,3 +4,4 @@ __pycache*
 *.tiled-session
 *.tiled-project
 esper/
+saves/
