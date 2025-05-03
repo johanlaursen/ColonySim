@@ -1,7 +1,8 @@
 import random
 
-import arcade
+import arcade.gui
 from arcade.camera import Camera2D
+from arcade.gui import UIManager
 from arcade.math import Vec2
 
 from core.settings import MAP_TILE_HEIGHT
@@ -9,11 +10,14 @@ from core.settings import MAP_TILE_WIDTH
 from core.settings import SCROLL_ZOOM_SPEED
 from core.settings import TILE_SIZE
 from core.spritemap import SPRITEMAP
+from core.views.menu_view import MenuView
 
 
 class MapView(arcade.View):
     def __init__(self, window):
         super().__init__(window)
+        self.ui_manager = UIManager(window)
+
         self.map_width = MAP_TILE_WIDTH
         self.map_height = MAP_TILE_HEIGHT
         self.tile_size = TILE_SIZE
@@ -25,7 +29,7 @@ class MapView(arcade.View):
             size=(16, 16), columns=49, count=49 * 22
         )
 
-        # Define ground types
+        # CREATING BASIC MAP
         self.ground_types = [
             SPRITEMAP["ground"],
             SPRITEMAP["ground_dirt"],
@@ -43,6 +47,7 @@ class MapView(arcade.View):
                 sprite.center_x = col * self.tile_size
                 sprite.center_y = row * self.tile_size
                 self.map_sprites.append(sprite)
+        # STOP CREATING BASIC MAP
 
         # Camera setup
         self.camera = Camera2D()
@@ -54,10 +59,35 @@ class MapView(arcade.View):
         self.mouse_start_x = 0
         self.mouse_start_y = 0
 
+        switch_menu_button = arcade.gui.UIFlatButton(text="Pause", width=150)
+
+        # Initialise the button with an on_click event.
+        @switch_menu_button.event("on_click")
+        def on_click_switch_button(event):
+            # Passing the main view into menu view as an argument.
+            menu_view = MenuView(self)
+            self.window.show_view(menu_view)
+
+        # Use the anchor to position the button on the screen.
+        self.anchor = self.ui_manager.add(arcade.gui.UIAnchorLayout())
+
+        self.anchor.add(
+            anchor_x="center_x",
+            anchor_y="center_y",
+            child=switch_menu_button,
+        )
+
+    def on_show_view(self):
+        self.ui_manager.enable()
+
+    def on_hide_view(self):
+        self.ui_manager.disable()
+
     def on_draw(self):
         self.clear()
         self.camera.use()
         self.map_sprites.draw()
+        self.ui_manager.draw()
 
         # Cycle through the sprite list
         # self.sprite_list.clear()
