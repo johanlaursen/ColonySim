@@ -27,3 +27,21 @@ class Position:
         Returns x and y center coordinates of the tile
         """
         return tile_x * TILE_SIZE, tile_y * TILE_SIZE
+
+
+@dataclass(slots=True)
+class MapTile:
+    """
+    tile_type: key in the sprite map
+    """
+
+    tile_type: int
+
+
+@dataclass(slots=True)
+class SpriteListID:
+    """
+    sprite_list_id: id of the sprite in the sprite list
+    """
+
+    sprite_list_id: int

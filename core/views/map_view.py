@@ -5,6 +5,8 @@ from arcade.camera import Camera2D
 from arcade.gui import UIManager
 from arcade.math import Vec2
 
+import esper.esper as esper
+from core.components import space
 from core.settings import MAP_TILE_HEIGHT
 from core.settings import MAP_TILE_WIDTH
 from core.settings import SCROLL_ZOOM_SPEED
@@ -37,6 +39,7 @@ class MapView(arcade.View):
         ]
 
         # Generate the map
+        sprite_id = 0  # For creating entity
         for row in range(self.map_height):
             for col in range(self.map_width):
                 ground_type = random.choices(
@@ -47,6 +50,12 @@ class MapView(arcade.View):
                 sprite.center_x = col * self.tile_size
                 sprite.center_y = row * self.tile_size
                 self.map_sprites.append(sprite)
+
+                position = space.Position(col * self.tile_size, row * self.tile_size)
+                tile = space.MapTile(ground_type)
+                sprite_list_id = space.SpriteListID(sprite_id)
+                esper.create_entity(position, tile, sprite_list_id)
+                sprite_id += 1
         # STOP CREATING BASIC MAP
 
         # Camera setup

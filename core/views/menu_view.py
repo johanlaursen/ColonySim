@@ -2,6 +2,8 @@ from typing import List
 
 import arcade
 
+from core.utils.save import save_game
+
 
 class MenuView(arcade.View):
     """Main menu view class."""
@@ -19,10 +21,12 @@ class MenuView(arcade.View):
         options_button = arcade.gui.UIFlatButton(text="Options", width=150)
 
         exit_button = arcade.gui.UIFlatButton(text="Exit", width=320)
+        save_button = arcade.gui.UIFlatButton(text="Save", width=150)
+        load_button = arcade.gui.UIFlatButton(text="Load", width=150)
 
         # Initialise a grid in which widgets can be arranged.
         self.grid = arcade.gui.UIGridLayout(
-            column_count=2, row_count=3, horizontal_spacing=20, vertical_spacing=20
+            column_count=2, row_count=4, horizontal_spacing=20, vertical_spacing=20
         )
 
         # Adding the buttons to the layout.
@@ -31,6 +35,8 @@ class MenuView(arcade.View):
         self.grid.add(volume_button, column=0, row=1)
         self.grid.add(options_button, column=1, row=1)
         self.grid.add(exit_button, column=0, row=2, column_span=2)
+        self.grid.add(save_button, column=0, row=3)
+        self.grid.add(load_button, column=1, row=3)
 
         self.anchor = self.ui_manager.add(arcade.gui.UIAnchorLayout())
 
@@ -55,6 +61,14 @@ class MenuView(arcade.View):
         @exit_button.event("on_click")
         def on_click_exit_button(event):
             arcade.exit()
+
+        @save_button.event("on_click")
+        def on_click_save_button(event):
+            save_game(self.window, "save.json")
+
+        @load_button.event("on_click")
+        def on_click_load_button(event):
+            print("Loading game does nothing currently")
 
         @volume_button.event("on_click")
         def on_click_volume_button(event):
