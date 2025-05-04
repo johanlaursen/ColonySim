@@ -2,7 +2,7 @@ import random
 
 import arcade.gui
 from arcade.camera import Camera2D
-from arcade.gui import UIManager
+from arcade.gui import UIView
 from arcade.math import Vec2
 
 import esper.esper as esper
@@ -12,13 +12,29 @@ from core.settings import MAP_TILE_WIDTH
 from core.settings import SCROLL_ZOOM_SPEED
 from core.settings import TILE_SIZE
 from core.spritemap import SPRITEMAP
+from core.ui.build_ui import BuildUI
 from core.views.menu_view import MenuView
 
 
-class MapView(arcade.View):
-    def __init__(self, window):
-        super().__init__(window)
-        self.ui_manager = UIManager(window)
+class MapView(UIView):
+    def __init__(self):
+        super().__init__()
+        # Camera setup
+        self.camera = Camera2D()
+        self.camera_scale = 1.0
+        self.camera_position = Vec2(0, 0)
+        # GUI camera for UI elements won't scale with zoom level
+        # self.ui_camera = Camera2D()
+
+        # Build UI
+        self.build_ui = BuildUI(self.window)
+
+        # self.build_section_manager = SectionManager(self)
+        # # self.build_section_manager.camera = self.camera
+        # self.build_section_manager.add_section(BuildSection(camera=self.ui_camera))
+        # # Section will duplicate the on_key_release event if not removed
+        # self.build_section_manager.managed_events.remove("on_key_release")
+        # self.build_section_manager_enabled = False
 
         self.map_width = MAP_TILE_WIDTH
         self.map_height = MAP_TILE_HEIGHT
@@ -31,6 +47,7 @@ class MapView(arcade.View):
             size=(16, 16), columns=49, count=49 * 22
         )
 
+        # TODO move to own function and file
         # CREATING BASIC MAP
         self.ground_types = [
             SPRITEMAP["ground"],
@@ -58,11 +75,6 @@ class MapView(arcade.View):
                 sprite_id += 1
         # STOP CREATING BASIC MAP
 
-        # Camera setup
-        self.camera = Camera2D()
-        self.camera_scale = 1.0
-        self.camera_position = Vec2(0, 0)
-
         # Dragging state
         self.is_dragging = False
         self.mouse_start_x = 0
@@ -78,25 +90,18 @@ class MapView(arcade.View):
             self.window.show_view(menu_view)
 
         # Use the anchor to position the button on the screen.
-        self.anchor = self.ui_manager.add(arcade.gui.UIAnchorLayout())
+        self.anchor = self.ui.add(arcade.gui.UIAnchorLayout())
 
         self.anchor.add(
-            anchor_x="center_x",
-            anchor_y="center_y",
+            anchor_x="left",
+            anchor_y="top",
             child=switch_menu_button,
         )
 
-    def on_show_view(self):
-        self.ui_manager.enable()
-
-    def on_hide_view(self):
-        self.ui_manager.disable()
-
-    def on_draw(self):
+    def on_draw_before_ui(self):
         self.clear()
         self.camera.use()
         self.map_sprites.draw()
-        self.ui_manager.draw()
 
         # Cycle through the sprite list
         # self.sprite_list.clear()
@@ -119,6 +124,22 @@ class MapView(arcade.View):
             self.mouse_start_x = x
             self.mouse_start_y = y
 
+    def on_key_release(self, key, modifiers):
+        print("Key released:", key)
+        print("ui children", self.ui.children)
+        print("anchor", self.anchor)
+        if key == arcade.key.B:
+            # enabled = self.build_section_manager_enabled
+            if self.build_ui in self.ui.children[0]:
+                print("Disabling build ui")
+                self.ui.remove(self.build_ui)
+                # self.build_section_manager.disable()
+            else:
+                print("Enabling build ui")
+                self.ui.add(self.build_ui)
+                # self.build_section_manager.enable()
+            # self.build_section_manager_enabled = not enabled
+
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if buttons & arcade.MOUSE_BUTTON_LEFT:
             self.is_dragging = True  # Mark as dragging
@@ -136,7 +157,8 @@ class MapView(arcade.View):
                 world_x, world_y, world_z = self.camera.unproject((x, y))
                 print(f"World coordinates: ({world_x}, {world_y}, {world_z})")
             else:
-                print("Mouse drag ended")
+                pass
+                # print("Mouse drag ended")
 
     def on_update(self, delta_time):
         pass
