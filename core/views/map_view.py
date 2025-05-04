@@ -26,9 +26,6 @@ class MapView(UIView):
         # GUI camera for UI elements won't scale with zoom level
         # self.ui_camera = Camera2D()
 
-        # Build UI
-        self.build_ui = BuildUI(self.window)
-
         # self.build_section_manager = SectionManager(self)
         # # self.build_section_manager.camera = self.camera
         # self.build_section_manager.add_section(BuildSection(camera=self.ui_camera))
@@ -40,6 +37,7 @@ class MapView(UIView):
         self.map_height = MAP_TILE_HEIGHT
         self.tile_size = TILE_SIZE
         self.map_sprites = arcade.SpriteList()
+        self.placed_sprites = arcade.SpriteList()
 
         # Load the sprite sheet
         self.sprite_sheet = arcade.SpriteSheet("resources/colored_packed.png")
@@ -75,6 +73,9 @@ class MapView(UIView):
                 sprite_id += 1
         # STOP CREATING BASIC MAP
 
+        # Build UI
+        self.build_ui = BuildUI(self.window, self)
+
         # Dragging state
         self.is_dragging = False
         self.mouse_start_x = 0
@@ -102,6 +103,7 @@ class MapView(UIView):
         self.clear()
         self.camera.use()
         self.map_sprites.draw()
+        self.placed_sprites.draw()
 
         # Cycle through the sprite list
         # self.sprite_list.clear()

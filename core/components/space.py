@@ -32,7 +32,7 @@ class Position:
 @dataclass(slots=True)
 class MapTile:
     """
-    tile_type: key in the sprite map
+    tile_type: key in the texture grid
     """
 
     tile_type: int
@@ -45,3 +45,13 @@ class SpriteListID:
     """
 
     sprite_list_id: int
+
+
+@dataclass(slots=True)
+class SpriteComponent:
+    """
+    texture_id: id of the texture in the texture grid
+    """
+
+    texture_id: int
+    rotation: float = 0.0  # Rotation in degrees

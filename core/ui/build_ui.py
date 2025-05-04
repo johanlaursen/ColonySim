@@ -1,7 +1,10 @@
 from arcade import Window
 from arcade.gui import UIAnchorLayout
-from arcade.gui import UIFlatButton
 from arcade.gui import UIGridLayout
+from arcade.gui import UITextureButton
+from arcade.gui import UIView
+
+from core.spritemap import SPRITEMAP
 
 
 class BuildUI(UIAnchorLayout):
@@ -10,7 +13,7 @@ class BuildUI(UIAnchorLayout):
     Will probably refactor this to be a generic "Right UI Panel" and have
      the build UI be a child of that in the future"""
 
-    def __init__(self, window: Window, *args, **kwargs):
+    def __init__(self, window: Window, view: UIView, *args, **kwargs):
 
         # x,y is the bottom left corner of the UI
         # width, height is the size of the UI
@@ -32,9 +35,19 @@ class BuildUI(UIAnchorLayout):
             vertical_spacing=20,
         )
 
-        for c in range(2):
-            for r in range(4):
-                button = UIFlatButton(text=f"Button {r * 2 + c + 1}", width=20)
+        placeable_button_types = ["person", "tree", "fallowed_ground", "tent"]
+        placeable_button_types = [
+            SPRITEMAP[button] for button in placeable_button_types
+        ]
+
+        for c in range(1):
+            for r in range(len(placeable_button_types)):
+                # button = UIFlatButton(text=f"Button {r * 2 + c + 1}", width=20)
+                button = UITextureButton(
+                    texture=view.texture_grid[placeable_button_types[r]],
+                    width=16,
+                    height=16,
+                )
                 self.grid.add(button, column=c, row=r)
 
         self.add(self.grid, anchor_x="right", anchor_y="center")
