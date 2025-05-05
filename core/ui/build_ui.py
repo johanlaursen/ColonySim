@@ -1,8 +1,12 @@
+import arcade
 from arcade import Window
 from arcade.gui import UIAnchorLayout
 from arcade.gui import UIGridLayout
 from arcade.gui import UITextureButton
+from arcade.gui import UITextureToggle
 from arcade.gui import UIView
+from arcade.gui.surface import Surface
+from arcade.gui.widgets.buttons import UIFlatButton
 
 from core.spritemap import SPRITEMAP
 
@@ -43,7 +47,12 @@ class BuildUI(UIAnchorLayout):
         for c in range(1):
             for r in range(len(placeable_button_types)):
                 # button = UIFlatButton(text=f"Button {r * 2 + c + 1}", width=20)
-                button = UITextureButton(
+                # button = UITextureButton(
+                #     texture=view.texture_grid[placeable_button_types[r]],
+                #     width=16,
+                #     height=16,
+                # )
+                button = BorderedUITextureButton(
                     texture=view.texture_grid[placeable_button_types[r]],
                     width=16,
                     height=16,
@@ -52,3 +61,38 @@ class BuildUI(UIAnchorLayout):
 
         self.add(self.grid, anchor_x="right", anchor_y="center")
         print(self.grid.children)
+
+
+class BorderedUITextureButton(UITextureButton):
+    """This class mixes in UIFlatButton STYLE_RED to get borders when pressed
+    for the UITextureButton class"""
+
+    STYLE = UIFlatButton.STYLE_RED
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def do_render(self, surface: Surface):
+        super().do_render(surface)
+
+        style = self.get_current_style()
+        self._apply_style(style)
+
+        border_color = style.get("border_width", UIFlatButton.UIStyle.border)
+        border_width = style.get("border_width", UIFlatButton.UIStyle.border)
+
+        state = self.get_current_state()
+        print(border_color, border_width, state)
+        if border_color and border_width and (state == "press"):
+            arcade.draw_lbwh_rectangle_outline(
+                border_width,
+                border_width,
+                self.content_width - 2 * border_width,
+                self.content_height - 2 * border_width,
+                color=border_color,
+                border_width=border_width,
+            )
+
+
+class CustomUITextureToggle(UITextureToggle):
+    pass

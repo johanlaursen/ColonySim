@@ -26,13 +26,6 @@ class MapView(UIView):
         # GUI camera for UI elements won't scale with zoom level
         # self.ui_camera = Camera2D()
 
-        # self.build_section_manager = SectionManager(self)
-        # # self.build_section_manager.camera = self.camera
-        # self.build_section_manager.add_section(BuildSection(camera=self.ui_camera))
-        # # Section will duplicate the on_key_release event if not removed
-        # self.build_section_manager.managed_events.remove("on_key_release")
-        # self.build_section_manager_enabled = False
-
         self.map_width = MAP_TILE_WIDTH
         self.map_height = MAP_TILE_HEIGHT
         self.tile_size = TILE_SIZE
@@ -131,16 +124,12 @@ class MapView(UIView):
         print("ui children", self.ui.children)
         print("anchor", self.anchor)
         if key == arcade.key.B:
-            # enabled = self.build_section_manager_enabled
             if self.build_ui in self.ui.children[0]:
                 print("Disabling build ui")
                 self.ui.remove(self.build_ui)
-                # self.build_section_manager.disable()
             else:
                 print("Enabling build ui")
                 self.ui.add(self.build_ui)
-                # self.build_section_manager.enable()
-            # self.build_section_manager_enabled = not enabled
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if buttons & arcade.MOUSE_BUTTON_LEFT:
